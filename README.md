@@ -17,9 +17,9 @@ PulseMetrics is built to close that window. It simulates a **€128M ARR EMEA-fo
 
 ## Live Demo
 
-> **Coming Soon.** Hosted deployment in progress.
+[Open PulseMetrics](https://pulsemetrics-alpha.vercel.app)
 
-In the meantime, clone the repo and open `index.html` directly in your browser. No build step, no dependencies.
+You can also, clone the repo and open `index.html` directly in your browser. No build step, no dependencies.
 
 ```bash
 git clone https://github.com/rushatdubey/pulsemetrics
