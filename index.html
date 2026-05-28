@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PulseMetrics B2B SaaS Revenue Intelligence</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:        #f0f0f3;
+  --nm-light:  #ffffff;
+  --nm-dark:   #c8c8ce;
+  --text:      #0f1117;
+  --muted:     #64748b;
+  --faint:     #94a3b8;
+  --accent:    #0284c7;
+  --accent-2:  #38bdf8;
+  --accent-soft: rgba(2,132,199,0.10);
+  --accent-soft2: rgba(2,132,199,0.06);
+  --red:       #dc2626; --red-soft:   rgba(220,38,38,0.09);
+  --amber:     #d97706; --amber-soft: rgba(217,119,6,0.09);
+  --green:     #15803d; --green-soft: rgba(21,128,61,0.09);
+  --shadow-out: 8px 8px 20px var(--nm-dark), -5px -5px 14px var(--nm-light);
+  --shadow-sm:  4px 4px 10px var(--nm-dark), -3px -3px 8px var(--nm-light);
+  --shadow-in:  inset 3px 3px 8px var(--nm-dark), inset -3px -3px 8px var(--nm-light);
+  --ff: 'DM Sans', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  --mono: 'DM Mono', monospace;
+  --r: 18px; --r-sm: 10px;
+}
+.dark {
+  --bg: #0f1117; --nm-light: #1a1d27; --nm-dark: #070810;
+  --text: #f1f5f9; --muted: #94a3b8; --faint: #475569;
+  --accent: #38bdf8; --accent-soft: rgba(56,189,248,0.13); --accent-soft2: rgba(56,189,248,0.07);
+  --red: #f87171;   --red-soft:   rgba(248,113,113,0.10);
+  --amber: #fbbf24; --amber-soft: rgba(251,191,36,0.10);
+  --green: #4ade80; --green-soft: rgba(74,222,128,0.10);
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body { font-family:var(--ff); background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; transition:background .3s,color .3s; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp   { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+@keyframes floatY   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+@keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.5} }
+@keyframes slideIn  { from{opacity:0;transform:translateX(12px)} to{opacity:1;transform:translateX(0)} }
+@keyframes barAnim  { from{width:0} to{width:var(--w)} }
+@keyframes expandIn { from{opacity:0;transform:scale(0.96)} to{opacity:1;transform:scale(1)} }
+
+.au  { animation:fadeUp .6s cubic-bezier(.22,1,.36,1) both }
+.au1 { animation:fadeUp .6s .08s cubic-bezier(.22,1,.36,1) both }
+.au2 { animation:fadeUp .6s .16s cubic-bezier(.22,1,.36,1) both }
+.au3 { animation:fadeUp .6s .24s cubic-bezier(.22,1,.36,1) both }
+.au4 { animation:fadeUp .6s .32s cubic-bezier(.22,1,.36,1) both }
+.au5 { animation:fadeUp .6s .40s cubic-bezier(.22,1,.36,1) both }
+.au6 { animation:fadeUp .6s .48s cubic-bezier(.22,1,.36,1) both }
+
+/* ── SHARED ── */
+.page { max-width:1100px; margin:0 auto; padding:0 28px }
+.theme-btn {
+  width:34px; height:34px; border-radius:10px;
+  background:var(--bg); box-shadow:var(--shadow-sm);
+  border:none; cursor:pointer; font-size:15px;
+  display:flex; align-items:center; justify-content:center;
+  transition:box-shadow .2s,transform .18s; flex-shrink:0;
+}
+.theme-btn:hover { box-shadow:var(--shadow-out); transform:scale(1.06) }
+.theme-btn:active { box-shadow:var(--shadow-in); transform:scale(0.95) }
+
+/* ══════════════════════════════════════════
+   LANDING
+══════════════════════════════════════════ */
+#landing { background:var(--bg); min-height:100vh; padding-bottom:64px }
+
+/* NAV */
+.l-nav {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:22px 28px; max-width:1100px; margin:0 auto;
+}
+.l-nav-brand { display:flex; align-items:center; gap:10px; text-decoration:none }
+.l-mark {
+  width:36px; height:36px; border-radius:10px;
+  background:var(--accent); box-shadow:var(--shadow-sm);
+  display:flex; align-items:center; justify-content:center;
+  transition:box-shadow .2s;
+}
+.l-mark:hover { box-shadow:var(--shadow-in) }
+.l-mark svg { width:18px; height:18px }
+.l-name { font-size:16px; font-weight:700; letter-spacing:-.4px; color:var(--text) }
+.l-badge {
+  font-size:10px; font-weight:600; letter-spacing:.04em; text-transform:uppercase;
+  padding:2px 8px; border-radius:20px;
+  background:var(--accent-soft); color:var(--accent);
+}
+.nav-pill {
+  display:flex; align-items:center; gap:6px;
+  padding:5px 12px 5px 8px; border-radius:100px;
+  background:var(--bg); box-shadow:var(--shadow-sm);
+  font-size:11.5px; color:var(--muted); font-weight:500;
+}
+.live-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--green); animation:pulse 2s infinite;
+}
+.btn-primary {
+  display:flex; align-items:center; gap:7px;
+  padding:11px 20px; border-radius:12px;
+  background:#0f1117; color:#fff;
+  border:none; font-family:var(--ff); font-size:13.5px; font-weight:500;
+  cursor:pointer; transition:all .22s cubic-bezier(.22,1,.36,1);
+  box-shadow:4px 4px 14px rgba(15,17,23,0.25),-1px -1px 4px rgba(255,255,255,0.5);
+  letter-spacing:-.1px;
+}
+.btn-primary:hover { transform:translateY(-2px); box-shadow:6px 8px 20px rgba(15,17,23,0.30),-1px -1px 4px rgba(255,255,255,0.5) }
+.btn-primary:active { transform:scale(0.97) }
+.dark .btn-primary { background:#f1f5f9; color:#0f1117 }
+.btn-ghost {
+  display:flex; align-items:center; gap:7px;
+  padding:11px 18px; border-radius:12px;
+  background:var(--bg); color:var(--text);
+  border:none; font-family:var(--ff); font-size:13.5px; font-weight:500;
+  cursor:pointer; transition:all .22s cubic-bezier(.22,1,.36,1);
+  box-shadow:var(--shadow-sm); letter-spacing:-.1px; text-decoration:none;
+}
+.btn-ghost:hover { box-shadow:var(--shadow-out); transform:translateY(-1px) }
+.btn-ghost:active { box-shadow:var(--shadow-in); transform:scale(0.97) }
+
+/* HERO */
+.hero {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:48px; align-items:center;
+  padding:56px 28px 48px; max-width:1100px; margin:0 auto;
+}
+.hero-tag {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:5px 12px 5px 8px; border-radius:100px;
+  background:var(--bg); box-shadow:var(--shadow-sm);
+  font-size:11.5px; color:var(--muted); font-weight:500; margin-bottom:20px;
+}
+.hero-tag span {
+  background:var(--accent-soft); color:var(--accent);
+  font-size:10px; font-weight:600; padding:2px 7px; border-radius:100px;
+}
+.hero-title {
+  font-size:clamp(40px,5.5vw,62px); font-weight:700;
+  letter-spacing:-2.5px; line-height:1.04; color:var(--text); margin-bottom:14px;
+}
+.gradient-text {
+  background:linear-gradient(135deg,#0284c7 0%,#0ea5e9 50%,#38bdf8 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.hero-sub {
+  font-size:16px; font-weight:400; color:var(--muted);
+  margin-bottom:12px; letter-spacing:-.2px; line-height:1.5;
+}
+.hero-desc {
+  font-size:13.5px; color:var(--muted); line-height:1.75;
+  margin-bottom:20px; max-width:500px;
+}
+.stack-line {
+  font-size:11px; color:var(--faint); margin-bottom:28px;
+  letter-spacing:.04em; display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+}
+.stack-sep { width:3px; height:3px; border-radius:50%; background:var(--faint) }
+.cta-row { display:flex; gap:10px; flex-wrap:wrap }
+
+/* FLOAT CARD */
+.hero-visual { position:relative; display:flex; justify-content:center; align-items:center }
+.float-card {
+  width:100%; max-width:460px; border-radius:22px;
+  background:var(--bg); box-shadow:var(--shadow-out);
+  padding:22px; animation:floatY 6s ease-in-out infinite;
+}
+.fc-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px }
+.fc-brand  { display:flex; align-items:center; gap:8px }
+.fc-dot-row { display:flex; gap:5px }
+.fc-dot { width:9px; height:9px; border-radius:50% }
+.fc-mini-tabs {
+  display:flex; gap:4px; padding:4px; border-radius:10px;
+  background:var(--bg); box-shadow:var(--shadow-in); margin-bottom:14px;
+}
+.fc-tab { font-size:9px; padding:4px 8px; border-radius:7px; color:var(--faint); cursor:default }
+.fc-tab.a { background:var(--bg); box-shadow:var(--shadow-sm); color:var(--text); font-weight:600 }
+.kpi-mini { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px }
+.kpi-m { border-radius:12px; background:var(--bg); box-shadow:var(--shadow-sm); padding:10px 10px 8px }
+.kpi-m-label { font-size:8.5px; color:var(--faint); text-transform:uppercase; letter-spacing:.05em; margin-bottom:4px }
+.kpi-m-val   { font-size:16px; font-weight:300; letter-spacing:-1px; color:var(--text); line-height:1 }
+.kpi-m-badge { font-size:8px; font-weight:500; padding:1px 5px; border-radius:100px; margin-top:4px; display:inline-block }
+.bg-g { background:var(--green-soft); color:var(--green) }
+.bg-r { background:var(--red-soft);   color:var(--red) }
+.bg-a { background:var(--amber-soft); color:var(--amber) }
+.bg-b { background:var(--accent-soft); color:var(--accent) }
+.mini-chart-row { display:grid; grid-template-columns:1.4fr 1fr; gap:8px }
+.mini-chart-card { border-radius:12px; background:var(--bg); box-shadow:var(--shadow-sm); padding:10px }
+.mc-label { font-size:8.5px; color:var(--faint); margin-bottom:8px; letter-spacing:.04em; text-transform:uppercase }
+.bar-preview { display:flex; flex-direction:column; gap:4px }
+.bar-row  { display:flex; align-items:center; gap:5px }
+.bar-name { font-size:7.5px; color:var(--muted); width:44px; flex-shrink:0 }
+.bar-track { flex:1; height:5px; border-radius:3px; background:rgba(0,0,0,0.06); overflow:hidden }
+.bar-fill  { height:100%; border-radius:3px; animation:barAnim 1.4s cubic-bezier(.22,1,.36,1) both }
+.trend-mini { font-size:8.5px; color:var(--faint); display:flex; align-items:center; gap:3px; margin-top:6px }
+.trend-up { color:var(--accent); font-weight:600 }
+
+/* METRICS STRIP */
+.metrics-strip { max-width:1100px; margin:0 auto 56px; padding:0 28px }
+.ms-inner {
+  display:grid; grid-template-columns:repeat(5,1fr); gap:12px;
+  padding:20px; border-radius:20px; background:var(--bg); box-shadow:var(--shadow-in);
+}
+.ms-card {
+  border-radius:14px; background:var(--bg); box-shadow:var(--shadow-sm);
+  padding:16px 14px; text-align:center;
+  transition:box-shadow .2s,transform .2s;
+}
+.ms-card:hover { box-shadow:var(--shadow-out); transform:translateY(-2px) }
+.ms-val   { font-size:22px; font-weight:300; letter-spacing:-1px; color:var(--text); line-height:1 }
+.ms-label { font-size:10.5px; color:var(--faint); margin-top:5px; letter-spacing:.02em }
+.ms-trend { font-size:10px; font-weight:500; margin-top:5px }
+.tr-g { color:var(--green) }
+.tr-r { color:var(--red) }
+.tr-a { color:var(--amber) }
+.tr-b { color:var(--accent) }
+
+/* FEATURES */
+.section { max-width:1100px; margin:0 auto 56px; padding:0 28px }
+.section-label { font-size:11px; color:var(--faint); text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px }
+.section-title { font-size:28px; font-weight:600; letter-spacing:-.8px; margin-bottom:8px }
+.section-sub   { font-size:14px; color:var(--muted); margin-bottom:32px; line-height:1.6; max-width:560px }
+.features-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px }
+.feat-card {
+  border-radius:18px; background:var(--bg); box-shadow:var(--shadow-out);
+  padding:22px 18px; transition:all .22s cubic-bezier(.22,1,.36,1); cursor:default;
+}
+.feat-card:hover { box-shadow:var(--shadow-sm); transform:translateY(-3px) }
+.feat-card:hover .feat-icon { box-shadow:var(--shadow-in) }
+.feat-icon {
+  width:40px; height:40px; border-radius:12px;
+  background:var(--bg); box-shadow:var(--shadow-sm);
+  display:flex; align-items:center; justify-content:center;
+  margin-bottom:14px; transition:box-shadow .2s;
+}
+.feat-name { font-size:13px; font-weight:600; color:var(--text); margin-bottom:7px; letter-spacing:-.2px }
+.feat-desc { font-size:12px; color:var(--muted); line-height:1.55 }
+
+/* ABOUT */
+.about-card {
+  border-radius:22px; background:var(--bg); box-shadow:var(--shadow-out);
+  padding:40px 44px; display:grid; grid-template-columns:1fr 2fr; gap:48px; align-items:center;
+}
+.ab-label { font-size:11px; color:var(--faint); text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px }
+.ab-title { font-size:22px; font-weight:600; letter-spacing:-.6px; line-height:1.2; color:var(--text) }
+.ab-text  { font-size:13.5px; color:var(--muted); line-height:1.75 }
+.ab-text + .ab-text { margin-top:12px }
+.ab-pills { display:flex; flex-wrap:wrap; gap:6px; margin-top:20px }
+.ab-pill  { font-size:11px; padding:4px 10px; border-radius:100px; background:var(--bg); box-shadow:var(--shadow-sm); color:var(--muted) }
+
+/* FOOTER */
+footer {
+  max-width:1100px; margin:0 auto;
+  padding:24px 28px 32px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-top:1px solid var(--nm-dark);
+}
+.footer-left { font-size:12px; color:var(--faint); line-height:1.7 }
+.footer-left strong { color:var(--muted); font-weight:500 }
+.footer-icons { display:flex; gap:8px }
+.ficon {
+  width:34px; height:34px; border-radius:10px;
+  background:var(--bg); box-shadow:var(--shadow-sm);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--muted); text-decoration:none;
+  transition:all .2s;
+}
+.ficon:hover { box-shadow:var(--shadow-out); color:var(--text) }
+.ficon svg { width:16px; height:16px }
+
+/* TOAST */
+.toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(8px);
+  background:var(--bg); box-shadow:var(--shadow-out); color:var(--text);
+  font-family:var(--ff); font-size:12.5px; font-weight:500;
+  padding:10px 20px; border-radius:100px;
+  opacity:0; pointer-events:none; transition:opacity .2s,transform .2s;
+  white-space:nowrap; z-index:999;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0) }
+
+/* ══════════════════════════════════════════
+   DASHBOARD
+══════════════════════════════════════════ */
+#dashboard { display:none; background:var(--bg); min-height:100vh }
+.page-enter { animation:expandIn .4s cubic-bezier(.22,1,.36,1) both }
+.page-exit  { animation:expandIn .35s cubic-bezier(.22,1,.36,1) reverse both }
+
+/* DASH HEADER */
+.d-header {
+  padding:20px 28px 16px; display:flex; align-items:center; justify-content:space-between;
+  max-width:1100px; margin:0 auto;
+}
+.d-brand { display:flex; align-items:center; gap:12px }
+.d-mark {
+  width:38px; height:38px; border-radius:11px;
+  background:var(--accent); box-shadow:var(--shadow-sm);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:box-shadow .2s;
+}
+.d-mark:hover { box-shadow:var(--shadow-in) }
+.d-mark svg { width:18px; height:18px }
+.d-name { font-size:17px; font-weight:700; letter-spacing:-.4px }
+.d-sub  { font-size:11.5px; color:var(--faint); margin-top:2px }
+.d-header-right { display:flex; align-items:center; gap:10px }
+.author-chip {
+  display:flex; align-items:center; gap:7px;
+  padding:7px 14px 7px 8px; border-radius:100px;
+  background:var(--bg); box-shadow:var(--shadow-sm);
+  font-size:12.5px; font-weight:500; color:var(--text);
+  text-decoration:none; transition:box-shadow .18s;
+}
+.author-chip:hover { box-shadow:var(--shadow-out) }
+.author-av {
+  width:24px; height:24px; border-radius:50%;
+  background:var(--accent); color:#fff;
+  font-size:9px; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+}
+.back-btn {
+  display:flex; align-items:center; gap:6px;
+  padding:7px 14px; border-radius:100px;
+  background:var(--bg); box-shadow:var(--shadow-sm);
+  border:none; font-family:var(--ff); font-size:12px; font-weight:500; color:var(--muted);
+  cursor:pointer; transition:all .18s;
+}
+.back-btn:hover { color:var(--text); box-shadow:var(--shadow-out) }
+.tab-divider { height:1px; background:var(--nm-dark); opacity:.5; max-width:1044px; margin:0 auto }
+
+/* TAB RAIL */
+.tab-rail {
+  display:flex; margin:16px 28px;
+  max-width:1044px; margin-left:auto; margin-right:auto;
+  padding:5px; border-radius:16px;
+  background:var(--bg); box-shadow:var(--shadow-in); gap:4px;
+}
+.tab-btn {
+  flex:1; font-family:var(--ff); font-size:12px; font-weight:500;
+  color:var(--muted); background:transparent; border:none; border-radius:12px;
+  padding:9px 8px; cursor:pointer; white-space:nowrap;
+  transition:all .22s cubic-bezier(.22,1,.36,1);
+}
+.tab-btn.active { color:var(--text); background:var(--bg); box-shadow:var(--shadow-out) }
+.tab-btn:hover:not(.active) { color:var(--text) }
+
+/* PANES */
+.pane { display:none; padding:20px 28px 48px; max-width:1100px; margin:0 auto }
+.pane.active { display:block; animation:slideIn .3s cubic-bezier(.22,1,.36,1) both }
+
+/* PAGE HEADER */
+.page-title {
+  font-size:20px; font-weight:700; letter-spacing:-.7px; color:var(--text);
+  display:flex; align-items:center; gap:8px; margin-bottom:4px;
+}
+.page-sub { font-size:12.5px; color:var(--muted); margin-bottom:20px }
+.live-dot-sm { width:7px; height:7px; border-radius:50%; background:var(--green); animation:pulse 2s infinite; display:inline-block }
+
+/* KPI GRID */
+.kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:16px }
+.kpi-card {
+  border-radius:18px; background:var(--bg); box-shadow:var(--shadow-out);
+  padding:20px 20px 16px; transition:box-shadow .2s;
+}
+.kpi-card:hover { box-shadow:var(--shadow-sm) }
+.kpi-label { font-size:10px; font-weight:500; letter-spacing:.07em; color:var(--faint); text-transform:uppercase; margin-bottom:10px; display:flex; align-items:center; gap:6px }
+.kpi-val   { font-size:28px; font-weight:300; letter-spacing:-1.4px; color:var(--text); line-height:1; margin-bottom:5px; font-variant-numeric:tabular-nums }
+.kpi-val .unit { font-size:14px; font-weight:400; opacity:.7; letter-spacing:-.2px }
+.kpi-delta { font-size:11px; font-weight:500; display:flex; align-items:center; gap:4px }
+.kpi-delta.up   { color:var(--green) }
+.kpi-delta.down { color:var(--red) }
+.kpi-delta.warn { color:var(--amber) }
+.kpi-delta.neutral { color:var(--muted) }
+.kpi-bench { font-size:10px; color:var(--faint); margin-top:3px }
+.kpi-accent-bar { height:2px; border-radius:2px; margin-top:14px; background:linear-gradient(90deg,var(--accent),transparent) }
+
+/* CARDS */
+.card { border-radius:18px; background:var(--bg); box-shadow:var(--shadow-out); padding:22px 22px 18px; transition:box-shadow .2s }
+.card:hover { box-shadow:7px 7px 18px var(--nm-dark),-5px -5px 12px var(--nm-light) }
+.card-title { font-size:13px; font-weight:600; letter-spacing:-.2px; color:var(--text); margin-bottom:4px; display:flex; align-items:center; justify-content:space-between }
+.card-sub   { font-size:11.5px; color:var(--muted); margin-bottom:14px }
+
+/* LAYOUTS */
+.chart-grid   { display:grid; grid-template-columns:1fr 1fr;  gap:14px; margin-bottom:14px }
+.chart-grid-w { display:grid; grid-template-columns:2fr 1fr;  gap:14px; margin-bottom:14px }
+.chart-wrap   { position:relative }
+
+/* INSET STRIP */
+.inset-strip { border-radius:20px; background:var(--bg); box-shadow:var(--shadow-in); padding:20px; margin-bottom:16px }
+
+/* BADGES */
+.badge { font-size:10.5px; font-weight:600; padding:3px 8px; border-radius:20px; display:inline-flex; align-items:center; gap:4px }
+.badge-green  { background:var(--green-soft); color:var(--green) }
+.badge-red    { background:var(--red-soft);   color:var(--red) }
+.badge-amber  { background:var(--amber-soft); color:var(--amber) }
+.badge-accent { background:var(--accent-soft); color:var(--accent) }
+.badge-muted  { background:rgba(100,116,139,0.1); color:var(--muted) }
+
+/* RISK GRID */
+.risk-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:8px }
+.risk-item { border-radius:12px; padding:14px; box-shadow:var(--shadow-in) }
+.risk-item.critical { background:rgba(220,38,38,0.05) }
+.risk-item.high     { background:rgba(217,119,6,0.05) }
+.risk-item.medium   { background:rgba(2,132,199,0.04) }
+.risk-item.healthy  { background:rgba(21,128,61,0.05) }
+.risk-count { font-size:26px; font-weight:300; letter-spacing:-1px; line-height:1 }
+.risk-label { font-size:10px; text-transform:uppercase; letter-spacing:.07em; color:var(--faint); margin-top:2px }
+.risk-arr   { font-size:11px; color:var(--muted); margin-top:6px }
+
+/* NRR TILES */
+.nrr-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px }
+.nrr-tile { border-radius:14px; padding:16px 14px; box-shadow:var(--shadow-in); text-align:center }
+.nrr-tier { font-size:10px; text-transform:uppercase; letter-spacing:.07em; color:var(--faint); margin-bottom:8px }
+.nrr-val  { font-size:26px; font-weight:300; letter-spacing:-1.2px; line-height:1 }
+.nrr-benchmark { font-size:10px; color:var(--faint); margin-top:5px }
+.nrr-chg  { font-size:10.5px; margin-top:3px }
+
+/* STAT STRIP */
+.stat-strip { display:grid; grid-template-columns:repeat(5,1fr); gap:10px }
+.stat-tile  { border-radius:14px; padding:14px; box-shadow:var(--shadow-in); text-align:center }
+.stat-val   { font-size:20px; font-weight:300; letter-spacing:-.8px; color:var(--text); line-height:1 }
+.stat-lbl   { font-size:9.5px; text-transform:uppercase; letter-spacing:.07em; color:var(--faint); margin-top:4px }
+
+/* BENCH ROWS */
+.bench-row { display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid rgba(128,128,128,.07); font-size:12px }
+.bench-row:last-child { border-bottom:none }
+.bench-name { color:var(--muted); font-size:11.5px }
+.bench-vals { display:flex; align-items:center; gap:10px }
+.bench-our  { font-weight:600; color:var(--text) }
+.bench-ind  { font-size:10.5px; color:var(--faint) }
+
+/* SCORECARD */
+.scorecard-row { display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid rgba(128,128,128,.07) }
+.scorecard-row:last-child { border-bottom:none }
+.sc-icon  { width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0 }
+.sc-label { font-size:12.5px; font-weight:500; color:var(--text) }
+.sc-sub   { font-size:10.5px; color:var(--faint) }
+.sc-val   { font-size:16px; font-weight:600; letter-spacing:-.6px; margin-left:auto }
+
+/* PROG BAR */
+.prog-bar-wrap { height:5px; border-radius:3px; background:var(--accent-soft); margin-top:4px; overflow:hidden; width:80px }
+.prog-bar-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,var(--accent),var(--accent-2)) }
+
+/* TABLE */
+.ctbl { width:100%; border-collapse:collapse }
+.ctbl th { font-size:9.5px; font-weight:500; letter-spacing:.07em; color:var(--faint); text-transform:uppercase; padding:0 6px 10px 0; text-align:left; border-bottom:1px solid var(--nm-dark) }
+.ctbl td { padding:9px 6px 9px 0; font-size:12px; color:var(--text); border-bottom:1px solid rgba(128,128,128,.07); vertical-align:middle }
+.ctbl tr:last-child td { border-bottom:none }
+.ctbl tr:hover td { background:var(--accent-soft2) }
+
+/* DASH FOOTER */
+.d-footer { max-width:1100px; margin:28px auto 0; padding:16px 28px; border-radius:16px; background:var(--bg); box-shadow:var(--shadow-in); display:flex; align-items:center; justify-content:space-between }
+.d-footer-info { font-size:11px; color:var(--faint) }
+.d-footer-links { display:flex; gap:16px }
+.d-footer-links a { font-size:11px; color:var(--faint); text-decoration:none; transition:color .15s }
+.d-footer-links a:hover { color:var(--accent) }
+
+/* MONO */
+.mono { font-family:var(--mono) }
+
+/* RESPONSIVE */
+@media (max-width:768px) {
+  .hero { grid-template-columns:1fr; gap:32px; padding:32px 20px 24px }
+  .hero-visual { display:none }
+  .features-grid { grid-template-columns:repeat(2,1fr) }
+  .ms-inner { grid-template-columns:repeat(3,1fr) }
+  .about-card { grid-template-columns:1fr; gap:24px; padding:28px 24px }
+  .kpi-grid { grid-template-columns:repeat(2,1fr) }
+  .chart-grid,.chart-grid-w { grid-template-columns:1fr }
+  .nrr-grid { grid-template-columns:1fr }
+  .stat-strip { grid-template-columns:repeat(3,1fr) }
+  .tab-rail { margin:16px 20px }
+  .pane { padding:20px 20px 48px }
+  .l-nav { padding:16px 20px }
+  .features-grid { grid-template-columns:repeat(2,1fr) }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ LANDING ══════════════════ -->
+<div id="landing">
+
+  <nav class="l-nav au">
+    <a class="l-nav-brand" href="#">
+      <div class="l-mark">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 12L5.5 7.5L8.5 9.5L12 4L14 6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="14" cy="6" r="1.2" fill="white"/>
+        </svg>
+      </div>
+      <span class="l-name">PulseMetrics</span>
+      <span class="l-badge">EMEA</span>
+    </a>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="nav-pill">
+        <span class="live-dot"></span>
+        B2B SaaS   Dec 2024
+      </div>
+      <button class="theme-btn" onclick="toggleTheme()">🌙</button>
+      <button class="btn-primary" onclick="openDash()" style="padding:8px 16px;font-size:12.5px;border-radius:10px">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Open Dashboard
+      </button>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div>
+      <div class="au">
+        <div class="hero-tag">
+          <span>NEW</span>
+          Calibrated to OpenView SaaS Benchmarks 2024
+        </div>
+      </div>
+      <div class="au1">
+        <h1 class="hero-title">B2B SaaS<br><span class="gradient-text">Revenue</span><br>Intelligence.</h1>
+      </div>
+      <div class="au2">
+        <p class="hero-sub">Built on simulated EMEA SaaS data.</p>
+        <p class="hero-desc">PulseMetrics transforms 5 source datasets (2,400 accounts, 71K subscription records, 1.3M usage events) into a full revenue intelligence platform. Built by <strong style="color:var(--text);font-weight:500">Rushat Dubey</strong>, it models churn prediction, NRR dynamics, cohort retention, unit economics, and rep-level performance benchmarked against OpenView, Bessemer, and ChartMogul 2024 indices.</p>
+      </div>
+      <div class="au3">
+        <div class="stack-line">
+          <span>SQL</span><span class="stack-sep"></span>
+          <span>Python</span><span class="stack-sep"></span>
+          <span>Scikit-learn</span><span class="stack-sep"></span>
+          <span>Pandas</span><span class="stack-sep"></span>
+          <span>Chart.js</span><span class="stack-sep"></span>
+          <span>SaaS Analytics</span>
+        </div>
+      </div>
+      <div class="au4">
+        <div class="cta-row">
+          <button class="btn-primary" onclick="openDash()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Open Dashboard
+          </button>
+          <a class="btn-ghost" href="https://github.com/rushatdubey/pulsemetrics" target="_blank" rel="noopener">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            GitHub Repository
+          </a>
+          <a class="btn-ghost" href="https://linkedin.com/in/rushat" target="_blank" rel="noopener">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            Reach out to me
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- HERO VISUAL floating dashboard preview -->
+    <div class="hero-visual au5">
+      <div class="float-card">
+        <div class="fc-header">
+          <div class="fc-brand">
+            <div class="l-mark" style="width:26px;height:26px;border-radius:7px">
+              <svg viewBox="0 0 16 16" fill="none" style="width:12px;height:12px">
+                <path d="M2 12L5.5 7.5L8.5 9.5L12 4L14 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span style="font-size:12px;font-weight:700;letter-spacing:-.2px">PulseMetrics</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="fc-dot-row">
+              <div class="fc-dot" style="background:#ff5f57"></div>
+              <div class="fc-dot" style="background:#ffbd2e"></div>
+              <div class="fc-dot" style="background:#28c840"></div>
+            </div>
+          </div>
+        </div>
+        <div class="fc-mini-tabs">
+          <div class="fc-tab a">Overview</div>
+          <div class="fc-tab">Revenue</div>
+          <div class="fc-tab">Retention</div>
+          <div class="fc-tab">Unit Econ</div>
+          <div class="fc-tab">Reps</div>
+        </div>
+        <div class="kpi-mini">
+          <div class="kpi-m">
+            <div class="kpi-m-label">Total ARR</div>
+            <div class="kpi-m-val">€128<span style="font-size:9px">M</span></div>
+            <span class="kpi-m-badge bg-g">+1.0%</span>
+          </div>
+          <div class="kpi-m">
+            <div class="kpi-m-label">Ent. NRR</div>
+            <div class="kpi-m-val">106<span style="font-size:9px">%</span></div>
+            <span class="kpi-m-badge bg-b">Expanding</span>
+          </div>
+          <div class="kpi-m">
+            <div class="kpi-m-label">Churn Rate</div>
+            <div class="kpi-m-val">1.3<span style="font-size:9px">%</span></div>
+            <span class="kpi-m-badge bg-g">On Track</span>
+          </div>
+        </div>
+        <div class="mini-chart-row">
+          <div class="mini-chart-card">
+            <div class="mc-label">ARR by Tier (€M)</div>
+            <div class="bar-preview">
+              <div class="bar-row"><span class="bar-name">Enterprise</span><div class="bar-track"><div class="bar-fill" style="--w:94%;width:94%;background:rgba(2,132,199,0.55);animation-delay:.2s"></div></div></div>
+              <div class="bar-row"><span class="bar-name">Mid-Market</span><div class="bar-track"><div class="bar-fill" style="--w:57%;width:57%;background:rgba(59,130,246,0.5);animation-delay:.35s"></div></div></div>
+              <div class="bar-row"><span class="bar-name">SMB</span><div class="bar-track"><div class="bar-fill" style="--w:8%;width:8%;background:rgba(148,163,184,0.5);animation-delay:.5s"></div></div></div>
+            </div>
+            <div class="trend-mini"><span class="trend-up">€75.9M</span> Enterprise leads</div>
+          </div>
+          <div class="mini-chart-card">
+            <div class="mc-label">At-Risk ARR</div>
+            <svg viewBox="0 0 80 48" style="width:100%;height:44px">
+              <rect x="8" y="32" width="14" height="12" rx="2" fill="rgba(220,38,38,0.5)"/>
+              <rect x="26" y="20" width="14" height="24" rx="2" fill="rgba(217,119,6,0.5)"/>
+              <rect x="44" y="8" width="14" height="36" rx="2" fill="rgba(2,132,199,0.4)"/>
+              <text x="8" y="47" font-size="5.5" fill="#94a3b8">Crit</text>
+              <text x="26" y="47" font-size="5.5" fill="#94a3b8">High</text>
+              <text x="44" y="47" font-size="5.5" fill="#94a3b8">Med</text>
+            </svg>
+            <div class="trend-mini"><span style="color:var(--amber);font-weight:600">€35.3M</span> flagged ARR</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- METRICS STRIP -->
+  <div class="metrics-strip au6">
+    <div class="ms-inner">
+      <div class="ms-card">
+        <div class="ms-val">€128<span style="font-size:13px">M</span></div>
+        <div class="ms-label">Total ARR</div>
+        <div class="ms-trend tr-g">+1.0% MoM</div>
+      </div>
+      <div class="ms-card">
+        <div class="ms-val">106<span style="font-size:13px">%</span></div>
+        <div class="ms-label">Enterprise NRR</div>
+        <div class="ms-trend tr-b">Net expansion</div>
+      </div>
+      <div class="ms-card">
+        <div class="ms-val">1.30<span style="font-size:13px">%</span></div>
+        <div class="ms-label">Monthly Churn</div>
+        <div class="ms-trend tr-g">Below benchmark</div>
+      </div>
+      <div class="ms-card">
+        <div class="ms-val">4.2<span style="font-size:13px">×</span></div>
+        <div class="ms-label">Ent. LTV:CAC</div>
+        <div class="ms-trend tr-g">Above 3× floor</div>
+      </div>
+      <div class="ms-card">
+        <div class="ms-val">0.781</div>
+        <div class="ms-label">Churn Model AUC</div>
+        <div class="ms-trend tr-b">Strong signal</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="section">
+    <div class="section-label">Platform modules</div>
+    <h2 class="section-title">Five lenses on your revenue.</h2>
+    <p class="section-sub">Each module answers a CFO or CRO question directly from where ARR is leaking today to which reps are building quality books.</p>
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="feat-name">Revenue Overview</div>
+        <div class="feat-desc">MRR waterfall with New, Expansion, Contraction, and Churn movements across the full 2-year arc.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="feat-name">Retention & NRR</div>
+        <div class="feat-desc">Net Revenue Retention by tier, cohort curves, and churn signals, Enterprise at 106.3%, SMB at 78.6%.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="feat-name">Unit Economics</div>
+        <div class="feat-desc">LTV:CAC ratios and CAC payback by tier, Enterprise at 4.2×, SMB at 1.2× flagging investment inefficiency.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="feat-name">Rep Performance</div>
+        <div class="feat-desc">18-rep leaderboard with ARR managed, quota attainment, and portfolio health, who's building sustainably?</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="feat-name">Churn Prediction</div>
+        <div class="feat-desc">Logistic regression model (AUC 0.781) scoring all 1,461 active accounts; €35.3M flagged for intervention.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="section">
+    <div class="about-card">
+      <div>
+        <div class="ab-label">About this project</div>
+        <h2 class="ab-title">Built to answer where revenue is leaking.</h2>
+        <div class="ab-pills">
+          <span class="ab-pill">2,400 accounts</span>
+          <span class="ab-pill">71K subscriptions</span>
+          <span class="ab-pill">1.3M events</span>
+          <span class="ab-pill">OpenView calibrated</span>
+        </div>
+      </div>
+      <div>
+        <p class="ab-text">Every B2B SaaS CFO and CRO faces the same tension: the business is growing, but revenue is leaking silently. PulseMetrics simulates a €128M ARR EMEA-focused SaaS company and builds the full analytical stack to surface where risk is hiding from the SMB churn rate sitting below benchmark to the Mid-Market LTV:CAC that's drifted under 3×.</p>
+        <p class="ab-text">All data is synthetic and calibrated to OpenView SaaS Benchmarks 2024, the Bessemer Venture Partners Cloud Index, and publicly disclosed metrics from Intercom and Teamwork-tier Irish B2B SaaS companies. The pipeline runs 14 analytical stages in Python with a logistic regression churn model achieving AUC 0.781.</p>
+        <div style="margin-top:20px">
+          <button class="btn-primary" onclick="openDash()" style="display:inline-flex">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Explore the Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-left">
+      Built and designed by <strong>Rushat Dubey</strong>
+    </div>
+    <div class="footer-icons">
+      <a class="ficon" href="https://github.com/rushatdubey/pulsemetrics" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+      </a>
+      <a class="ficon" href="https://linkedin.com/in/rushat" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <a class="ficon" href="mailto:rushat16@icloud.com">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </a>
+    </div>
+  </footer>
+
+</div><!-- /landing -->
+
+<!-- ══════════════════ DASHBOARD ══════════════════ -->
+<div id="dashboard">
+
+  <div class="d-header">
+    <div class="d-brand">
+      <div class="d-mark" onclick="closeDash()" title="Back to home">
+        <svg viewBox="0 0 16 16" fill="none">
+          <path d="M2 12L5.5 7.5L8.5 9.5L12 4L14 6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="14" cy="6" r="1.2" fill="white"/>
+        </svg>
+      </div>
+      <div>
+        <div class="d-name">PulseMetrics</div>
+        <div class="d-sub">B2B SaaS Revenue Intelligence   EMEA 2024</div>
+      </div>
+    </div>
+    <div class="d-header-right">
+      <button class="back-btn" onclick="closeDash()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+      <button class="theme-btn" onclick="toggleTheme()">🌙</button>
+      <a class="author-chip" href="https://linkedin.com/in/rushat" target="_blank">
+        <div class="author-av">RD</div>
+        Rushat Dubey
+      </a>
+    </div>
+  </div>
+
+  <div class="tab-divider"></div>
+
+  <div class="tab-rail">
+    <button class="tab-btn active" onclick="goTab('overview',this)">Overview</button>
+    <button class="tab-btn" onclick="goTab('revenue',this)">Revenue</button>
+    <button class="tab-btn" onclick="goTab('retention',this)">Retention</button>
+    <button class="tab-btn" onclick="goTab('unit',this)">Unit Econ</button>
+    <button class="tab-btn" onclick="goTab('reps',this)">Rep Perf</button>
+  </div>
+
+  <!-- TAB 1: OVERVIEW -->
+  <div id="p-overview" class="pane active">
+    <div class="page-title">Executive Overview <span class="live-dot-sm" style="margin-left:4px"></span></div>
+    <div class="page-sub">€128M ARR &nbsp; EMEA B2B SaaS &nbsp; OpenView/Bessemer calibrated &nbsp; 2,400 accounts &nbsp; 18 reps</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card au">
+        <div class="kpi-label">Total ARR</div>
+        <div class="kpi-val">€128<span class="unit">.1M</span></div>
+        <div class="kpi-delta up">↑ +1.0% MoM growth</div>
+        <div class="kpi-bench">Dec 2024   1,442 active accounts</div>
+        <div class="kpi-accent-bar"></div>
+      </div>
+      <div class="kpi-card au1">
+        <div class="kpi-label">Monthly Churn</div>
+        <div class="kpi-val">1.30<span class="unit">%</span></div>
+        <div class="kpi-delta up">✓ Below 1.5% benchmark</div>
+        <div class="kpi-bench">Benchmark: &lt;1.5% (ChartMogul 2024)</div>
+        <div class="kpi-accent-bar"></div>
+      </div>
+      <div class="kpi-card au2">
+        <div class="kpi-label">Enterprise NRR</div>
+        <div class="kpi-val">106<span class="unit">.3%</span></div>
+        <div class="kpi-delta up">↑ Above 100% net expansion</div>
+        <div class="kpi-bench">Benchmark: &gt;100% ✓ (Bessemer 2024)</div>
+        <div class="kpi-accent-bar"></div>
+      </div>
+      <div class="kpi-card au3">
+        <div class="kpi-label">At-Risk ARR</div>
+        <div class="kpi-val">€35<span class="unit">.3M</span></div>
+        <div class="kpi-delta warn">563 accounts flagged</div>
+        <div class="kpi-bench">231 Critical + High priority</div>
+        <div class="kpi-accent-bar" style="background:linear-gradient(90deg,var(--red),transparent)"></div>
+      </div>
+    </div>
+
+    <div class="inset-strip au4">
+      <div class="stat-strip">
+        <div class="stat-tile"><div class="stat-val">€75.9M</div><div class="stat-lbl">Enterprise ARR</div></div>
+        <div class="stat-tile"><div class="stat-val">€45.9M</div><div class="stat-lbl">Mid-Market ARR</div></div>
+        <div class="stat-tile"><div class="stat-val">€6.4M</div><div class="stat-lbl">SMB ARR</div></div>
+        <div class="stat-tile"><div class="stat-val">0.781</div><div class="stat-lbl">Churn Model AUC</div></div>
+        <div class="stat-tile"><div class="stat-val">75%</div><div class="stat-lbl">Gross Margin</div></div>
+      </div>
+    </div>
+
+    <div class="chart-grid-w au5">
+      <div class="card">
+        <div class="card-title">ARR Trend <span class="badge badge-accent">2023 / 2024</span></div>
+        <div class="card-sub">Monthly recurring revenue × 12   24-month view</div>
+        <div class="chart-wrap" style="height:195px"><canvas id="arrTrendChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">ARR by Tier</div>
+        <div class="card-sub">Dec 2024 composition</div>
+        <div class="chart-wrap" style="height:195px"><canvas id="tierPieChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="chart-grid au6">
+      <div class="card">
+        <div class="card-title">NRR by Tier <span class="badge badge-green">2022 / 2024</span></div>
+        <div class="card-sub">Net Revenue Retention   expansion vs churn signal</div>
+        <div class="chart-wrap" style="height:185px"><canvas id="nrrChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">At-Risk ARR <span class="badge badge-red">563 Accounts</span></div>
+        <div class="card-sub">Health score segmentation   intervention priority</div>
+        <div class="risk-grid">
+          <div class="risk-item critical"><div class="risk-count" style="color:var(--red)">67</div><div class="risk-label">Critical</div><div class="risk-arr">€2.6M ARR</div></div>
+          <div class="risk-item high"><div class="risk-count" style="color:var(--amber)">164</div><div class="risk-label">High</div><div class="risk-arr">€8.9M ARR</div></div>
+          <div class="risk-item medium"><div class="risk-count" style="color:var(--accent)">332</div><div class="risk-label">Medium</div><div class="risk-arr">€23.8M ARR</div></div>
+          <div class="risk-item healthy"><div class="risk-count" style="color:var(--green)">898</div><div class="risk-label">Healthy</div><div class="risk-arr">€93.2M ARR</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-footer">
+      <div class="d-footer-info">Built and designed by <a href="https://linkedin.com/in/rushat" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:500">Rushat Dubey</a></div>
+      <div class="d-footer-links">
+        <a href="https://github.com/rushatdubey/pulsemetrics" target="_blank">GitHub</a>
+        <a href="https://linkedin.com/in/rushat" target="_blank">LinkedIn</a>
+        <a href="mailto:rushat16@icloud.com">Email</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: REVENUE -->
+  <div id="p-revenue" class="pane">
+    <div class="page-title">Revenue Intelligence</div>
+    <div class="page-sub">MRR waterfall   growth drivers   expansion vs churn dynamics</div>
+    <div class="kpi-grid">
+      <div class="kpi-card au"><div class="kpi-label">Dec MRR</div><div class="kpi-val">€10.7<span class="unit">M</span></div><div class="kpi-delta up">↑ +€36.6K net new MoM</div><div class="kpi-accent-bar"></div></div>
+      <div class="kpi-card au1"><div class="kpi-label">Expansion MRR</div><div class="kpi-val">€80.8<span class="unit">K</span></div><div class="kpi-delta up">↑ Dec avg expansion</div><div class="kpi-accent-bar"></div></div>
+      <div class="kpi-card au2"><div class="kpi-label">Churn MRR</div><div class="kpi-val">€36.9<span class="unit">K</span></div><div class="kpi-delta up">↓ Low Dec churn</div><div class="kpi-accent-bar" style="background:linear-gradient(90deg,var(--green),transparent)"></div></div>
+      <div class="kpi-card au3"><div class="kpi-label">YoY ARR Growth</div><div class="kpi-val">22<span class="unit">%</span></div><div class="kpi-delta up">↑ vs 19% industry median</div><div class="kpi-bench">Top quartile: 27% (KeyBanc 2024)</div><div class="kpi-accent-bar"></div></div>
+    </div>
+    <div class="card au4" style="margin-bottom:14px">
+      <div class="card-title">MRR Waterfall 2024
+        <div style="display:flex;gap:8px">
+          <span style="display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--muted)"><span style="width:8px;height:8px;border-radius:2px;background:#22c55e;display:inline-block"></span>Expansion</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--muted)"><span style="width:8px;height:8px;border-radius:2px;background:#ef4444;display:inline-block"></span>Churn</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--muted)"><span style="width:8px;height:8px;border-radius:2px;background:var(--accent);display:inline-block"></span>Contraction</span>
+        </div>
+      </div>
+      <div class="card-sub">Monthly revenue movements   net new dynamics</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="waterfallChart"></canvas></div>
+    </div>
+    <div class="chart-grid au5">
+      <div class="card">
+        <div class="card-title">Active Accounts Trend</div>
+        <div class="card-sub">Total active accounts 2024</div>
+        <div class="chart-wrap" style="height:185px"><canvas id="activeAccChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">vs Benchmarks <span class="badge badge-accent">KeyBanc 2024</span></div>
+        <div class="card-sub">Company vs industry median vs top quartile</div>
+        <div style="margin-top:4px">
+          <div class="bench-row"><div class="bench-name">YoY ARR Growth</div><div class="bench-vals"><div class="bench-our" style="color:var(--accent)">22%</div><div class="bench-ind">Med: 19%   Top: 27%</div><span class="badge badge-green">Above</span></div></div>
+          <div class="bench-row"><div class="bench-name">Gross Margin</div><div class="bench-vals"><div class="bench-our">75%</div><div class="bench-ind">Med: 72%   Top: 80%</div><span class="badge badge-green">Above</span></div></div>
+          <div class="bench-row"><div class="bench-name">Rule of 40</div><div class="bench-vals"><div class="bench-our">28</div><div class="bench-ind">Med: 22   Top: 40</div><span class="badge badge-amber">Watch</span></div></div>
+          <div class="bench-row"><div class="bench-name">Churn SMB</div><div class="bench-vals"><div class="bench-our" style="color:var(--amber)">2.2%</div><div class="bench-ind">Med: 2.1%   Top: 1.4%</div><span class="badge badge-red">Below</span></div></div>
+          <div class="bench-row"><div class="bench-name">Churn Enterprise</div><div class="bench-vals"><div class="bench-our" style="color:var(--green)">0.17%</div><div class="bench-ind">Med: 0.2%   Top: 0.1%</div><span class="badge badge-green">Best-in-Class</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: RETENTION -->
+  <div id="p-retention" class="pane">
+    <div class="page-title">Retention &amp; NRR</div>
+    <div class="page-sub">Net revenue retention   cohort analysis   churn signals by tier</div>
+    <div class="inset-strip au">
+      <div style="font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px">Net Revenue Retention   Dec 2024</div>
+      <div class="nrr-grid">
+        <div class="nrr-tile"><div class="nrr-tier">Enterprise</div><div class="nrr-val" style="color:var(--accent)">106.3%</div><div class="nrr-benchmark">Benchmark: &gt;100% ✓</div><div class="nrr-chg" style="color:var(--green)">↑ Net expansion</div></div>
+        <div class="nrr-tile"><div class="nrr-tier">Mid-Market</div><div class="nrr-val">97.4%</div><div class="nrr-benchmark">Benchmark: ~98% ≈</div><div class="nrr-chg" style="color:var(--amber)">Near threshold</div></div>
+        <div class="nrr-tile"><div class="nrr-tier">SMB</div><div class="nrr-val" style="color:var(--red)">78.6%</div><div class="nrr-benchmark">Benchmark: ~87% ✗</div><div class="nrr-chg" style="color:var(--red)">↓ Churn risk</div></div>
+      </div>
+    </div>
+    <div class="chart-grid au1">
+      <div class="card"><div class="card-title">NRR Trend by Tier <span class="badge badge-accent">2022 / 2024</span></div><div class="card-sub">Annual NRR   each tier vs 100% threshold</div><div class="chart-wrap" style="height:200px"><canvas id="nrrTrendChart"></canvas></div></div>
+      <div class="card"><div class="card-title">Churn by Tier vs Benchmarks</div><div class="card-sub">Monthly average churn rate   industry comparison</div><div class="chart-wrap" style="height:200px"><canvas id="churnBenchChart"></canvas></div></div>
+    </div>
+    <div class="card au2" style="margin-bottom:14px"><div class="card-title">Cohort Retention <span class="badge badge-muted">Account-Based %</span></div><div class="card-sub">Account retention curves by tier at M0 through M18</div><div class="chart-wrap" style="height:195px"><canvas id="cohortChart"></canvas></div></div>
+    <div class="card au3"><div class="card-title">Health Score at Churn</div><div class="card-sub">Where on the health spectrum do churned accounts cluster?</div><div class="chart-wrap" style="height:175px"><canvas id="healthChurnChart"></canvas></div></div>
+  </div>
+
+  <!-- TAB 4: UNIT ECONOMICS -->
+  <div id="p-unit" class="pane">
+    <div class="page-title">Unit Economics</div>
+    <div class="page-sub">LTV   CAC   payback period   efficiency by tier</div>
+    <div class="kpi-grid">
+      <div class="kpi-card au"><div class="kpi-label">Enterprise LTV:CAC</div><div class="kpi-val">4.2<span class="unit">×</span></div><div class="kpi-delta up">✓ Above 3× threshold</div><div class="kpi-bench">Benchmark: &gt;3× (SaaS Capital 2024)</div><div class="kpi-accent-bar"></div></div>
+      <div class="kpi-card au1"><div class="kpi-label">Mid-Market LTV:CAC</div><div class="kpi-val">2.8<span class="unit">×</span></div><div class="kpi-delta warn">⚠ Below 3× threshold</div><div class="kpi-bench">Benchmark: &gt;3×   Top: 4×</div><div class="kpi-accent-bar" style="background:linear-gradient(90deg,var(--amber),transparent)"></div></div>
+      <div class="kpi-card au2"><div class="kpi-label">SMB LTV:CAC</div><div class="kpi-val">1.2<span class="unit">×</span></div><div class="kpi-delta down">✗ Needs improvement</div><div class="kpi-bench">Benchmark: &gt;1.5×   Top: 2.5×</div><div class="kpi-accent-bar" style="background:linear-gradient(90deg,var(--red),transparent)"></div></div>
+      <div class="kpi-card au3"><div class="kpi-label">Ent. CAC Payback</div><div class="kpi-val">18<span class="unit">mo</span></div><div class="kpi-delta up">✓ Below 20mo benchmark</div><div class="kpi-bench">Benchmark: 20mo   Top: 14mo</div><div class="kpi-accent-bar"></div></div>
+    </div>
+    <div class="chart-grid au4">
+      <div class="card"><div class="card-title">LTV vs CAC by Tier</div><div class="card-sub">Lifetime value vs acquisition cost</div><div class="chart-wrap" style="height:210px"><canvas id="ltvCacChart"></canvas></div></div>
+      <div class="card"><div class="card-title">CAC Payback Periods</div><div class="card-sub">Months to recover CAC vs benchmarks</div><div class="chart-wrap" style="height:210px"><canvas id="paybackChart"></canvas></div></div>
+    </div>
+    <div class="card au5">
+      <div class="card-title">Unit Economics Scorecard</div>
+      <div class="card-sub">Key efficiency metrics vs industry benchmarks</div>
+      <div>
+        <div class="scorecard-row"><div class="sc-icon" style="background:var(--accent-soft)">🏢</div><div><div class="sc-label">Enterprise LTV:CAC</div><div class="sc-sub">SaaS Capital 2024   Benchmark: &gt;3×</div></div><div class="sc-val" style="color:var(--accent)">4.2× <span class="badge badge-green" style="font-size:9.5px">✓</span></div></div>
+        <div class="scorecard-row"><div class="sc-icon" style="background:rgba(37,99,235,0.08)">📊</div><div><div class="sc-label">Mid-Market LTV:CAC</div><div class="sc-sub">SaaS Capital 2024   Benchmark: &gt;3×</div></div><div class="sc-val" style="color:var(--amber)">2.8× <span class="badge badge-amber" style="font-size:9.5px">⚠</span></div></div>
+        <div class="scorecard-row"><div class="sc-icon" style="background:var(--red-soft)">🏪</div><div><div class="sc-label">SMB LTV:CAC</div><div class="sc-sub">SaaS Capital 2024   Benchmark: &gt;1.5×</div></div><div class="sc-val" style="color:var(--red)">1.2× <span class="badge badge-red" style="font-size:9.5px">✗</span></div></div>
+        <div class="scorecard-row"><div class="sc-icon" style="background:var(--green-soft)">💡</div><div><div class="sc-label">Gross Margin</div><div class="sc-sub">KeyBanc 2024   Benchmark: 72% median</div></div><div class="sc-val" style="color:var(--green)">75% <span class="badge badge-green" style="font-size:9.5px">✓</span></div></div>
+        <div class="scorecard-row"><div class="sc-icon" style="background:var(--amber-soft)">📐</div><div><div class="sc-label">Rule of 40</div><div class="sc-sub">KeyBanc 2024   Benchmark: &gt;40 top quartile</div></div><div class="sc-val" style="color:var(--amber)">28 <span class="badge badge-amber" style="font-size:9.5px">⚠</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 5: REP PERFORMANCE -->
+  <div id="p-reps" class="pane">
+    <div class="page-title">Rep Performance</div>
+    <div class="page-sub">18 EMEA sales reps   ARR managed   quota attainment   account health</div>
+    <div class="kpi-grid">
+      <div class="kpi-card au"><div class="kpi-label">Top Rep ARR</div><div class="kpi-val">€9.7<span class="unit">M</span></div><div class="kpi-delta neutral">Brian Costello   Senior AE</div><div class="kpi-accent-bar"></div></div>
+      <div class="kpi-card au1"><div class="kpi-label">Avg Quota Attainment</div><div class="kpi-val">976<span class="unit">%</span></div><div class="kpi-delta up">All reps exceeded quota</div><div class="kpi-accent-bar"></div></div>
+      <div class="kpi-card au2"><div class="kpi-label">Active Accounts</div><div class="kpi-val">1,442</div><div class="kpi-delta neutral">Across 18 reps   ~80 each</div><div class="kpi-accent-bar"></div></div>
+      <div class="kpi-card au3"><div class="kpi-label">Avg Account Health</div><div class="kpi-val">65.8</div><div class="kpi-delta warn">Watch zone   action needed</div><div class="kpi-bench">Scale: 0 to 100</div><div class="kpi-accent-bar" style="background:linear-gradient(90deg,var(--amber),transparent)"></div></div>
+    </div>
+    <div class="chart-grid au4">
+      <div class="card"><div class="card-title">ARR Managed by Rep <span class="badge badge-accent">Top 10</span></div><div class="card-sub">Active ARR under management   Dec 2024</div><div class="chart-wrap" style="height:230px"><canvas id="repArrChart"></canvas></div></div>
+      <div class="card"><div class="card-title">Avg Account Health by Rep</div><div class="card-sub">Portfolio health score   higher is better</div><div class="chart-wrap" style="height:230px"><canvas id="repHealthChart"></canvas></div></div>
+    </div>
+    <div class="card au5">
+      <div class="card-title">Rep Leaderboard <span class="badge badge-muted">Dec 2024</span></div>
+      <div class="card-sub">Sorted by ARR managed   all figures in €M</div>
+      <table class="ctbl" style="margin-top:10px">
+        <thead><tr><th>#</th><th>Rep</th><th>Seniority</th><th>Accounts</th><th>ARR Managed</th><th>Quota Attainment</th><th>Avg Health</th><th>Status</th></tr></thead>
+        <tbody id="repTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /dashboard -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+const MONTHS_2024 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const ARR_TREND = [111.03,113.44,117.01,121.39,123.86,127.47,128.04,126.00,125.93,125.47,125.92,126.84,126.46,127.12,127.27,127.69,126.72,126.98,126.90,127.06,127.18,127.64,127.70,128.14];
+const ARR_MONTHS = ["Jan'23","Feb'23","Mar'23","Apr'23","May'23","Jun'23","Jul'23","Aug'23","Sep'23","Oct'23","Nov'23","Dec'23","Jan'24","Feb'24","Mar'24","Apr'24","May'24","Jun'24","Jul'24","Aug'24","Sep'24","Oct'24","Nov'24","Dec'24"];
+const WF = { expansion:[70.7,106.7,66.3,103.9,83.3,83.1,44.8,115.7,82.2,99.6,63.0,80.8], contraction:[23.2,15.2,14.7,9.3,14.4,13.9,8.0,16.7,23.4,8.9,13.1,7.3], churn:[79.2,36.6,38.6,59.3,149.7,48.3,42.9,86.2,48.4,52.5,44.6,36.9] };
+const REP_DATA = [
+  {name:'Brian Costello', seniority:'Senior AE', accounts:78,  arr:9.68, health:66.3, quota:1075.6},
+  {name:'Sinéad Walsh',   seniority:'AE',        accounts:82,  arr:9.41, health:65.6, quota:1447.7},
+  {name:"Declan O'Brien", seniority:'AE',        accounts:88,  arr:9.39, health:64.3, quota:1444.6},
+  {name:'Padraig Doyle',  seniority:'AE',        accounts:83,  arr:8.47, health:66.2, quota:1303.1},
+  {name:'Niamh Byrne',    seniority:'Senior AE', accounts:96,  arr:8.05, health:66.3, quota:894.4},
+  {name:'Tadhg Lawlor',   seniority:'Senior AE', accounts:90,  arr:7.92, health:67.2, quota:880.0},
+  {name:'Caoimhe Ryan',   seniority:'Senior AE', accounts:76,  arr:7.79, health:65.3, quota:865.6},
+  {name:'Conor Quinn',    seniority:'Senior AE', accounts:95,  arr:7.70, health:66.7, quota:855.6},
+  {name:'Aisling Brennan',seniority:'AE',        accounts:88,  arr:7.62, health:65.9, quota:1170.0},
+  {name:'Roisín Sullivan',seniority:'AE',        accounts:79,  arr:7.44, health:66.8, quota:1145.0},
+];
+
+let isDark = false;
+function toggleTheme() {
+  isDark = !isDark;
+  document.body.classList.toggle('dark', isDark);
+  document.querySelectorAll('.theme-btn').forEach(b => b.textContent = isDark ? '☀️' : '🌙');
+  if (chartsBuilt) rebuildCharts();
+}
+
+function openDash() {
+  const l = document.getElementById('landing');
+  const d = document.getElementById('dashboard');
+  l.style.animation = 'expandIn .35s cubic-bezier(.22,1,.36,1) reverse both';
+  setTimeout(() => {
+    l.style.display = 'none';
+    d.style.display = 'block';
+    d.style.animation = 'expandIn .4s cubic-bezier(.22,1,.36,1) both';
+    if (!chartsBuilt) { buildCharts(); chartsBuilt = true; }
+    window.scrollTo(0,0);
+  }, 300);
+}
+
+function closeDash() {
+  const l = document.getElementById('landing');
+  const d = document.getElementById('dashboard');
+  d.style.animation = 'expandIn .35s cubic-bezier(.22,1,.36,1) reverse both';
+  setTimeout(() => {
+    d.style.display = 'none';
+    l.style.display = 'block';
+    l.style.animation = 'expandIn .4s cubic-bezier(.22,1,.36,1) both';
+    window.scrollTo(0,0);
+  }, 280);
+}
+
+function goTab(id, btn) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('p-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+let chartsBuilt = false;
+const instances = {};
+function destroyAll() { Object.values(instances).forEach(c => { try { c.destroy() } catch(e){} }) }
+
+function tc()  { return isDark ? '#475569' : '#94a3b8' }
+function gr()  { return isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)' }
+function tipCfg() {
+  return { backgroundColor: isDark?'#1a1d27':'#ffffff', borderColor: isDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.09)', borderWidth:1, titleColor:isDark?'#f1f5f9':'#0f1117', bodyColor:isDark?'#94a3b8':'#64748b', titleFont:{family:"'DM Sans',sans-serif",size:11}, bodyFont:{family:"'DM Sans',sans-serif",size:11}, padding:10, cornerRadius:10 };
+}
+function scales(prefix='', suffix='') {
+  return { x:{ticks:{color:tc(),font:{size:10},maxRotation:40,autoSkip:true},grid:{color:gr()}}, y:{ticks:{color:tc(),font:{size:10},callback:v=>prefix+v+suffix},grid:{color:gr()}} };
+}
+
+function buildCharts() {
+  destroyAll();
+  const ACC='#0284c7', BLUE='#3b82f6', GREEN='#22c55e', RED='#ef4444', AMBER='#f59e0b', MUTED='#94a3b8';
+
+  instances.arrTrend = new Chart(document.getElementById('arrTrendChart'),{type:'line',data:{labels:ARR_MONTHS,datasets:[{data:ARR_TREND,borderColor:ACC,borderWidth:2.5,backgroundColor:'rgba(2,132,199,0.08)',fill:true,tension:0.4,pointRadius:0,pointHoverRadius:5,pointHoverBackgroundColor:ACC}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...tipCfg()}},scales:scales('€','M')}});
+
+  instances.tierPie = new Chart(document.getElementById('tierPieChart'),{type:'doughnut',data:{labels:['Enterprise','Mid-Market','SMB'],datasets:[{data:[75.89,45.86,6.40],backgroundColor:[ACC,BLUE,MUTED],borderWidth:0,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'right',labels:{color:isDark?'#f1f5f9':'#0f1117',font:{size:11},padding:12,boxWidth:12,borderRadius:3}},tooltip:{...tipCfg(),callbacks:{label:ctx=>` €${ctx.parsed.toFixed(1)}M`}}}}});
+
+  instances.nrr = new Chart(document.getElementById('nrrChart'),{type:'bar',data:{labels:['Enterprise','Mid-Market','SMB'],datasets:[{label:'2022',data:[104.5,99.5,80.6],backgroundColor:'rgba(2,132,199,0.25)',borderRadius:4,borderSkipped:false},{label:'2023',data:[104.6,96.2,78.9],backgroundColor:'rgba(2,132,199,0.50)',borderRadius:4,borderSkipped:false},{label:'2024',data:[106.3,97.4,78.6],backgroundColor:ACC,borderRadius:4,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:isDark?'#94a3b8':'#64748b',font:{size:10}}},tooltip:{...tipCfg()}},scales:{...scales('','%'),y:{...scales('','%').y,min:70,max:120}}}});
+
+  instances.waterfall = new Chart(document.getElementById('waterfallChart'),{type:'bar',data:{labels:MONTHS_2024,datasets:[{label:'Expansion',data:WF.expansion,backgroundColor:'rgba(34,197,94,0.7)',borderRadius:3},{label:'Churn',data:WF.churn.map(v=>-v),backgroundColor:'rgba(239,68,68,0.7)',borderRadius:3},{label:'Contraction',data:WF.contraction.map(v=>-v),backgroundColor:'rgba(2,132,199,0.6)',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:isDark?'#94a3b8':'#64748b',font:{size:10}}},tooltip:{...tipCfg()}},scales:{...scales('€','K')}}});
+
+  instances.activeAcc = new Chart(document.getElementById('activeAccChart'),{type:'line',data:{labels:MONTHS_2024,datasets:[{data:[1461,1463,1464,1466,1459,1461,1460,1461,1462,1463,1443,1442],borderColor:BLUE,borderWidth:2.5,backgroundColor:'rgba(59,130,246,0.08)',fill:true,tension:0.4,pointRadius:0,pointHoverRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...tipCfg()}},scales:scales('','')}});
+
+  instances.nrrTrend = new Chart(document.getElementById('nrrTrendChart'),{type:'line',data:{labels:['2022','2023','2024'],datasets:[{label:'Enterprise',data:[104.5,104.6,106.3],borderColor:ACC,borderWidth:2.5,tension:0.3,pointRadius:5,pointBackgroundColor:ACC},{label:'Mid-Market',data:[99.5,96.2,97.4],borderColor:BLUE,borderWidth:2.5,tension:0.3,pointRadius:5,pointBackgroundColor:BLUE},{label:'SMB',data:[80.6,78.9,78.6],borderColor:RED,borderWidth:2.5,tension:0.3,pointRadius:5,pointBackgroundColor:RED}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:isDark?'#94a3b8':'#64748b',font:{size:10},boxWidth:14}},tooltip:{...tipCfg()}},scales:{x:{ticks:{color:tc(),font:{size:10}},grid:{color:gr()}},y:{min:70,max:115,ticks:{color:tc(),font:{size:10},callback:v=>v+'%'},grid:{color:gr()}}}}});
+
+  instances.churnBench = new Chart(document.getElementById('churnBenchChart'),{type:'bar',data:{labels:['Enterprise','Mid-Market','SMB'],datasets:[{label:'This Co',data:[0.17,0.85,2.2],backgroundColor:[ACC,ACC,AMBER],borderRadius:5},{label:'Industry Med',data:[0.20,0.83,2.1],backgroundColor:'rgba(148,163,184,0.3)',borderRadius:5},{label:'Top Quartile',data:[0.10,0.50,1.4],backgroundColor:'rgba(34,197,94,0.25)',borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:isDark?'#94a3b8':'#64748b',font:{size:10}}},tooltip:{...tipCfg()}},scales:{...scales('','%')}}});
+
+  instances.cohort = new Chart(document.getElementById('cohortChart'),{type:'line',data:{labels:['M0','M1','M3','M6','M12','M18'],datasets:[{label:'Enterprise',data:[100,98,96,94,91,88],borderColor:ACC,borderWidth:2.5,tension:0.3,fill:false,pointRadius:4},{label:'Mid-Market',data:[100,94,89,83,74,65],borderColor:BLUE,borderWidth:2.5,tension:0.3,fill:false,pointRadius:4},{label:'SMB',data:[100,87,76,64,50,40],borderColor:RED,borderWidth:2.5,tension:0.3,fill:false,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:isDark?'#94a3b8':'#64748b',font:{size:10}}},tooltip:{...tipCfg()}},scales:{...scales('','%'),y:{...scales('','%').y,min:30,max:105}}}});
+
+  instances.healthChurn = new Chart(document.getElementById('healthChurnChart'),{type:'bar',data:{labels:['0–30 (Critical)','31–45 (High)','46–60 (Medium)','61–75 (Watch)','76–100 (Healthy)'],datasets:[{data:[340,520,380,190,70],backgroundColor:['rgba(220,38,38,0.7)','rgba(2,132,199,0.6)','rgba(245,158,11,0.6)','rgba(59,130,246,0.4)','rgba(34,197,94,0.4)'],borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:{...tipCfg()}},scales:scales('','')}});
+
+  instances.ltvCac = new Chart(document.getElementById('ltvCacChart'),{type:'bar',data:{labels:['Enterprise','Mid-Market','SMB'],datasets:[{label:'Avg LTV (€K)',data:[7702.7,448.4,30.4],backgroundColor:'rgba(2,132,199,0.7)',borderRadius:5},{label:'Avg CAC (€K)',data:[310.7,114.6,7.2],backgroundColor:'rgba(59,130,246,0.5)',borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:isDark?'#94a3b8':'#64748b',font:{size:10}}},tooltip:{...tipCfg()}},scales:scales('€','K')}});
+
+  instances.payback = new Chart(document.getElementById('paybackChart'),{type:'bar',data:{labels:['Enterprise','Mid-Market','SMB'],datasets:[{label:'This Co',data:[18,22,8],backgroundColor:[ACC,AMBER,GREEN],borderRadius:5},{label:'Industry Med',data:[20,20,8],backgroundColor:'rgba(148,163,184,0.3)',borderRadius:5},{label:'Top Quartile',data:[14,15,5],backgroundColor:'rgba(34,197,94,0.25)',borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:isDark?'#94a3b8':'#64748b',font:{size:10}}},tooltip:{...tipCfg()}},scales:scales('',' mo')}});
+
+  const top10 = REP_DATA.map(r => r.name.split(' ').pop());
+  instances.repArr = new Chart(document.getElementById('repArrChart'),{type:'bar',data:{labels:top10,datasets:[{data:REP_DATA.map(r=>r.arr),backgroundColor:REP_DATA.map((_,i)=>i===0?ACC:`rgba(2,132,199,${0.6-i*0.04})`),borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:{...tipCfg()}},scales:scales('€','M')}});
+
+  instances.repHealth = new Chart(document.getElementById('repHealthChart'),{type:'bar',data:{labels:top10,datasets:[{data:REP_DATA.map(r=>r.health),backgroundColor:REP_DATA.map(r=>r.health>=75?'rgba(34,197,94,0.7)':r.health>=60?'rgba(2,132,199,0.6)':'rgba(239,68,68,0.7)'),borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:{...tipCfg()}},scales:{...scales('',''),x:{...scales().x,min:50,max:80}}}});
+
+  const tbody = document.getElementById('repTableBody');
+  tbody.innerHTML = '';
+  REP_DATA.forEach((r,i) => {
+    const sc = r.seniority==='Senior AE'?'badge-accent':'badge-muted';
+    const hc = r.health>=70?'var(--green)':r.health>=60?'var(--amber)':'var(--red)';
+    const qc = r.quota>=1000?'var(--green)':'var(--accent)';
+    tbody.innerHTML += `<tr><td style="color:var(--faint);font-size:11px">${i+1}</td><td style="font-weight:500">${r.name}</td><td><span class="badge ${sc}">${r.seniority}</span></td><td class="mono">${r.accounts}</td><td class="mono" style="font-weight:600">€${r.arr.toFixed(2)}M</td><td class="mono" style="color:${qc};font-weight:600">${r.quota.toFixed(0)}%</td><td><div style="font-size:11px;color:${hc};font-weight:500">${r.health.toFixed(1)}</div><div class="prog-bar-wrap"><div class="prog-bar-fill" style="width:${r.health}%"></div></div></td><td><span class="badge ${r.quota>=1000?'badge-green':'badge-accent'}">${r.quota>=1000?'🏆 Top':'✓ On Track'}</span></td></tr>`;
+  });
+}
+
+function rebuildCharts() { destroyAll(); buildCharts(); }
+</script>
+</body>
+</html>
