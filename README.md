@@ -99,6 +99,9 @@ The platform is powered by five synthetic datasets, generated deterministically 
 
 All data is generated via `data/generate_data.py` with a fixed random seed for full reproducibility. Tier parameters (churn rates, NRR targets, CAC, health baselines) are calibrated to published SaaS benchmarks.
 
+> Note: Full raw datasets are omitted from the repository due to GitHub file size limitations. The complete datasets were programmatically generated using the included Python simulation pipeline located in `data/generate_data.py`.
+
+
 ---
 
 ## Machine Learning Layer
@@ -156,7 +159,6 @@ No frontend frameworks, no bundler, no build step. The entire platform runs from
 ```
 pulsemetrics/
 ├── index.html              # Full platform: landing page + dashboard (single file)
-├── assets/                 # Logo, icons, brand assets
 ├── screenshots/            # Platform preview images
 ├── sql/
 │   └── pulsemetrics_queries.sql   # 12 production-grade analytical SQL queries
@@ -164,11 +166,6 @@ pulsemetrics/
 │   └── analytics.py        # 14-stage Python analytics pipeline
 ├── data/
 │   ├── generate_data.py    # Deterministic synthetic data generator
-│   ├── accounts.csv
-│   ├── subscriptions.csv
-│   ├── events.csv
-│   ├── reps.csv
-│   └── support_tickets.csv
 ├── README.md
 └── LICENSE
 ```
