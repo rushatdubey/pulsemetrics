@@ -14,10 +14,17 @@ Every B2B SaaS CFO and CRO is managing the same tension: the business is growing
 PulseMetrics is built to close that window. It simulates a **€128M ARR EMEA-focused B2B SaaS company** and delivers a complete revenue intelligence stack: real-time health scoring, churn prediction, cohort analytics, and rep-level performance intelligence, surfaced through a production-grade interactive frontend.
 
 ---
-
 ## Live Demo
 
-[Open PulseMetrics](https://pulsemetrics-alpha.vercel.app)
+🔗 Live Platform: https://pulsemetrics-alpha.vercel.app
+
+Explore:
+- ARR growth and SaaS revenue intelligence
+- Churn prediction and customer health scoring
+- Cohort retention analytics
+- Rep-level sales performance tracking
+- SaaS unit economics and LTV:CAC analysis
+- Interactive business dashboards built with Chart.js
 
 You can also, clone the repo and open `index.html` directly in your browser. No build step, no dependencies.
 
