@@ -32,16 +32,16 @@ open index.html
 ## Platform Preview
 
 ### Landing Page
-![Landing Page](landing-page.png)
+![Landing Page](screenshots/landing-page.png)
 
 ### Executive Overview
-![Executive Overview](dashboard.png)
+![Executive Overview](screenshots/dashboard.png)
 
 ### Revenue Intelligence
-![Revenue Intelligence](revenue.png)
+![Revenue Intelligence](screenshots/revenue.png)
 
 ### Retention & NRR
-![Retention and NRR](retention.png)
+![Retention and NRR](screenshots/retention.png)
 
 ---
 
