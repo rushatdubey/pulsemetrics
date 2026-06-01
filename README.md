@@ -17,9 +17,9 @@ PulseMetrics is built to close that window. It simulates a **€128M ARR EMEA-fo
 
 ## Live Demo
 
-> **Coming Soon.** Hosted deployment in progress.
+https://pulsemetrics-alpha.vercel.app
 
-In the meantime, clone the repo and open `index.html` directly in your browser. No build step, no dependencies.
+You can also, clone the repo and open `index.html` directly in your browser. No build step, no dependencies.
 
 ```bash
 git clone https://github.com/rushatdubey/pulsemetrics
@@ -31,19 +31,11 @@ open index.html
 
 ## Platform Preview
 
-> The interface is an editorial briefing in teal: a long-form narrative landing page that opens into a five-tab analytics dashboard.
+> The interface is an editorial briefing in teal 
 
 ### Landing Page
-![Landing Page](landing-page.png)
+![Landing Page](preview/landing.png)
 
-### Executive Overview
-![Executive Overview](dashboard.png)
-
-### Revenue Intelligence
-![Revenue Intelligence](revenue.png)
-
-### Retention & NRR
-![Retention and NRR](retention.png)
 
 ---
 
