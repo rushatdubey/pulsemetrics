@@ -92,6 +92,7 @@ The platform is powered by five synthetic datasets, generated deterministically 
 | `support_tickets.csv` | 61,973 | Support interactions with severity, CSAT, and resolution time |
 
 All data is generated via `data/generate_data.py` with a fixed random seed for full reproducibility. Tier parameters (churn rates, NRR targets, CAC, health baselines) are calibrated to published SaaS benchmarks.
+NOTE: CSV files are not uploaded in the repository due to size limitations. 
 
 ---
 
@@ -149,20 +150,14 @@ No frontend frameworks, no bundler, no build step. The entire platform runs from
 
 ```
 pulsemetrics/
-├── index.html              # Full platform: landing page + dashboard (single file)
-├── assets/                 # Logo, icons, brand assets
-├── screenshots/            # Platform preview images
+├── index.html              # Full platform
+├── preview/                # Platform preview image
 ├── sql/
 │   └── pulsemetrics_queries.sql   # 12 production-grade analytical SQL queries
 ├── python/
 │   └── analytics.py        # 14-stage Python analytics pipeline
 ├── data/
 │   ├── generate_data.py    # Deterministic synthetic data generator
-│   ├── accounts.csv
-│   ├── subscriptions.csv
-│   ├── events.csv
-│   ├── reps.csv
-│   └── support_tickets.csv
 ├── README.md
 └── LICENSE
 ```
